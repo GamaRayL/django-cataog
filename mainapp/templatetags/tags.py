@@ -3,8 +3,8 @@ from django import template
 register = template.Library()
 
 
-@register.simple_tag()
-def mediapath(image):
+@register.filter()
+def mymedia(image):
     if image:
         return f'/media/{image}'
 

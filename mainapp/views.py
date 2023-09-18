@@ -1,23 +1,30 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView, ListView, DetailView
 
 from mainapp.models import Product
 
 
-def index(request):
-    product_list = Product.objects.all()
-    context = {
-        'object_list': product_list,
+class ProductListView(ListView):
+    model = Product
+    extra_context = {
         'title': 'Каталог товаров'
     }
 
-    return render(request, 'main/index.html', context)
 
+class ProductDetailView(DetailView):
+    model = Product
 
-def product(request):
-    product_list = Product.objects.all()
-    context = {
-        'object_list': product_list,
-        'title': 'Карточка товара'
-    }
+# class ProductListView(ListView):
+#     model = Product
+#     extra_context = {
+#         'title': 'Карточка товара'
+#     }
 
-    return render(request, 'main/product.html', context)
+# def product(request):
+#     product_list = Product.objects.all()
+#     context = {
+#         'object_list': product_list,
+#         'title': 'Карточка товара'
+#     }
+#
+#     return render(request, 'mainapp/product_detail.html', context)

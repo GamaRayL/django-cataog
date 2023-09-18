@@ -1,0 +1,26 @@
+{% extends 'mainapp/base.html' %}
+{% load tags %}
+{% block content %}
+    <div class="row text-center p-4">
+        {% for object in object_list %}
+            <div class="container col-4">
+                <div class="card p-0 mb-4">
+                    <div class="card-header">
+                        <h4 class="my-0">{{ object.name }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <img class="card-img"
+                             src="{{ object.image_preview|mymedia }}"/>
+                        <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
+                        <p>{{ object.description|slice:100 }}...</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'mainapp:product' object.pk %}" class="btn btn-warning col-6 float-left">К
+                            карточке товара</a>
+                        <button type="button" class="btn btn-lg btn-block btn-outline-primary col-6">Купить</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
