@@ -38,7 +38,7 @@ class Product(models.Model):
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=255, verbose_name='заголовок')
-    slug = models.SlugField(max_length=255, unique=True, verbose_name='slug')
+    slug = models.CharField(max_length=255, unique=True, verbose_name='slug')
     body = models.TextField(verbose_name='содержимое')
     img_preview = models.ImageField(upload_to='blog_post_preview/', verbose_name='превью изображения')
     create_date = models.DateTimeField(default=timezone.now, verbose_name='дата создания', **NULLABLE)
