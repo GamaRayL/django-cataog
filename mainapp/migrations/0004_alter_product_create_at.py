@@ -5,7 +5,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('mainapp', '0003_remove_product_create_date_and_more'),
     ]

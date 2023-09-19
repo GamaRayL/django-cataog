@@ -1,0 +1,26 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content %}
+    <form method="post" class="row">
+        <div class="card">
+            <div class="card_header">
+                {% if object %}
+                    Редактирование поста
+                {% else %}
+                    Добавление поста
+                {% endif %}
+            </div>
+            <div class="card_body">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">
+                    {% if object %}
+                        Сохранить
+                    {% else %}
+                        Добавить
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

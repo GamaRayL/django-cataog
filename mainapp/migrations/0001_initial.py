@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -26,12 +25,14 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, verbose_name='наименование')),
                 ('description', models.TextField(max_length=255, verbose_name='описание')),
-                ('image_preview', models.ImageField(blank=True, null=True, upload_to='preview/', verbose_name='превью изображений')),
+                ('image_preview',
+                 models.ImageField(blank=True, null=True, upload_to='preview/', verbose_name='превью изображений')),
                 ('price', models.IntegerField(max_length=20, verbose_name='цена')),
                 ('create_date', models.DateTimeField(verbose_name='дата создания')),
                 ('last_change_date', models.DateTimeField(verbose_name='дата последнего изменения')),
                 ('is_active', models.BooleanField(default=True, verbose_name='учится')),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='mainapp.category')),
+                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                               to='mainapp.category')),
             ],
             options={
                 'verbose_name': 'продукт',

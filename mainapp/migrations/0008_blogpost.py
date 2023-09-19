@@ -5,7 +5,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('mainapp', '0007_remove_product_is_active'),
     ]
@@ -19,7 +18,8 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(max_length=255, unique=True, verbose_name='slug')),
                 ('body', models.TextField(verbose_name='содержимое')),
                 ('img_preview', models.ImageField(upload_to='blog_post_preview/', verbose_name='превью изображения')),
-                ('create_date', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True, verbose_name='дата создания')),
+                ('create_date', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True,
+                                                     verbose_name='дата создания')),
                 ('is_published', models.BooleanField(default=False, verbose_name='признак публикации')),
                 ('view_count', models.IntegerField(verbose_name='количество просмотров')),
             ],

@@ -5,7 +5,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('mainapp', '0002_alter_product_price'),
     ]
@@ -22,7 +21,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='create_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now, verbose_name='дата создания'),
+            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now,
+                                       verbose_name='дата создания'),
             preserve_default=False,
         ),
         migrations.AddField(

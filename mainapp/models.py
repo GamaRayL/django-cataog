@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -36,14 +37,14 @@ class Product(models.Model):
         ordering = ('name',)
 
 
-class BlogPost(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=255, verbose_name='заголовок')
-    slug = models.CharField(max_length=255, unique=True, verbose_name='slug')
+    slug = models.CharField(max_length=255, unique=True, verbose_name='slug', **NULLABLE)
     body = models.TextField(verbose_name='содержимое')
-    img_preview = models.ImageField(upload_to='blog_post_preview/', verbose_name='превью изображения')
-    create_date = models.DateTimeField(default=timezone.now, verbose_name='дата создания', **NULLABLE)
-    is_published = models.BooleanField(default=False, verbose_name='признак публикации')
-    view_count = models.IntegerField(verbose_name='количество просмотров')
+    img_preview = models.ImageField(upload_to='post_preview/', verbose_name='превью изображения', **NULLABLE)
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
+    is_published = models.BooleanField(default=True, verbose_name='признак публикации')
+    view_count = models.IntegerField(default=0, verbose_name='количество просмотров')
 
     def __str__(self):
         return f'{self.title} {self.body} {self.create_date} {self.view_count}'

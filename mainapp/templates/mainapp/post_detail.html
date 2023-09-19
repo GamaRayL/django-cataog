@@ -1,0 +1,26 @@
+{% extends 'mainapp/base.html' %}
+{% load tags %}
+{% block content %}
+    <div class="row text-center">
+        <div class="col-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 text-left text-uppercase">{{ object.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-left">
+                        <p>{{ object.body }}</p>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{% url 'mainapp:post_update' object.pk %}" class="btn btn-outline-dark mr-2">
+                        Редактировать
+                    </a>
+                    <a href="{% url 'mainapp:post_delete' object.pk %}" class="btn btn-outline-danger">
+                        Удалить
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
