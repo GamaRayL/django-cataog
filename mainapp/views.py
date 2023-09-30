@@ -1,10 +1,12 @@
 from django.core.mail import send_mail
+from django.forms import inlineformset_factory
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mainapp.models import Product, Post
+from mainapp.forms import ProductForm, VersionForm
+from mainapp.models import Product, Post, Version
 
 
 class ProductListView(ListView):
@@ -16,6 +18,34 @@ class ProductListView(ListView):
 
 class ProductDetailView(DetailView):
     model = Product
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('mainapp:products')
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('mainapp:products')
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('mainapp:products')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        formset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+
+        if self.request.method == 'POST':
+            context_data['formset'] = formset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = formset(instance=self.object)
+
+        return context_data
 
 
 class PostListView(ListView):
@@ -40,8 +70,8 @@ class PostDetailView(DetailView):
         if post.view_count == 100:
             subject = 'Пост достиг 100 просмотров'
             message = f'Пост "{post.title}" достиг 100 просмотров.'
-            from_email = 'your_email@yandex.ru'
-            recipient_list = ['email@gmail.com']
+            from_email = 'bantarion@yandex.ru'
+            recipient_list = ['gamaizingg@gmail.com']
             send_mail(subject, message, from_email, recipient_list, fail_silently=True)
 
         post.view_count += 1

@@ -10,7 +10,7 @@ class Category(models.Model):
     description = models.TextField(max_length=255, verbose_name='описание')
 
     def __str__(self):
-        return f'{self.name} {self.description}'
+        return f'{self.name}'
 
     class Meta:
         verbose_name = 'категория'
@@ -27,6 +27,9 @@ class Product(models.Model):
     create_at = models.DateTimeField(default=timezone.now, verbose_name='дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
 
+    def get_active_version(self):
+        return self.versions.filter(is_current_version=True).first()
+
     def __str__(self):
         return (f'{self.name} {self.description} {self.image_preview} '
                 f'{self.category} {self.price} {self.create_at} {self.updated_at}')
@@ -35,6 +38,20 @@ class Product(models.Model):
         verbose_name = 'товар'
         verbose_name_plural = 'товары'
         ordering = ('name',)
+
+
+class Version(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='versions', verbose_name='продукт')
+    version_number = models.CharField(max_length=50, verbose_name='номер версии')
+    version_name = models.CharField(max_length=150, verbose_name='название версии')
+    is_current_version = models.BooleanField(default=False, verbose_name='признак текущей версии')
+
+    def __str__(self):
+        return f'{self.product.name} - Версия {self.version_number}'
+
+    class Meta:
+        verbose_name = 'версия'
+        verbose_name_plural = 'версии'
 
 
 class Post(models.Model):
