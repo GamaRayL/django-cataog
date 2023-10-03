@@ -19,31 +19,19 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
 
         fields = ('name', 'description', 'image_preview', 'category', 'price',)
 
-    @staticmethod
-    def clean_forbidden_words(value):
-        words = []
-        for word in forbidden_words:
-            if word.lower() in value.lower():
-                words.append(word)
-
-        if len(words) > 0:
-            raise forms.ValidationError(f'Запрещенные слова: {words}')
-
-        return value
-
-    def clean_field(self, field_name):
-        cleaned_data = self.cleaned_data[field_name]
-
-        words = [word for word in forbidden_words if word.lower() in cleaned_data.lower()]
-
-        if words:
-            raise forms.ValidationError(f'Запрещенные слова: {", ".join(words)}')
-
-    def clean_name(self):
-        return self.clean_field('name')
-
-    def clean_description(self):
-        return self.clean_field('description')
+    # def clean_field(self, field_name):
+    #     cleaned_data = self.cleaned_data[field_name]
+    #
+    #     words = [word for word in forbidden_words if word.lower() in cleaned_data]
+    #
+    #     if words:
+    #         raise forms.ValidationError(f'Запрещенные слова: {", ".join(words)}')
+    #
+    # def clean_name(self):
+    #     return self.clean_field('name')
+    #
+    # def clean_description(self):
+    #     return self.clean_field('description')
 
 
 class VersionForm(StyleFormMixin, forms.ModelForm):
