@@ -24,6 +24,7 @@
                         {% endif %}
                     </div>
                     <div class="card-footer">
+                        <p>{{ object.user }}</p>
                         <a href="{% url 'mainapp:product' object.pk %}" class="btn btn-warning col-6 float-left">
                             К карточке товара
                         </a>

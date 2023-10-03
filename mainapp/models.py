@@ -2,7 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
-NULLABLE = {'blank': True, 'null': True}
+from users.models import User
+from utils.utils import NULLABLE
 
 
 class Category(models.Model):
@@ -23,6 +24,7 @@ class Product(models.Model):
     description = models.TextField(max_length=255, verbose_name='описание')
     image_preview = models.ImageField(upload_to='preview/', verbose_name='превью изображений', **NULLABLE)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, **NULLABLE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     price = models.IntegerField(verbose_name='цена')
     create_at = models.DateTimeField(default=timezone.now, verbose_name='дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
