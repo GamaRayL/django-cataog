@@ -20,10 +20,12 @@
                         <br>
                         <p>{{ object.description }}</p>
                     </div>
-                    {% if user.is_authenticated %}
+                    {% if perms.mainapp.change_product %}
                         <a href="{% url 'mainapp:product_update' object.pk %}" class="btn btn-outline-dark mr-2">
                             Редактировать
                         </a>
+                    {% endif %}
+                    {% if user.is_superuser %}
                         <a href="{% url 'mainapp:product_delete' object.pk %}" class="btn btn-outline-dark mr-2">
                             Удалить
                         </a>

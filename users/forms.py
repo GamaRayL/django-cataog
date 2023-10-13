@@ -18,7 +18,5 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
         fields = ('email', 'password1', 'password2')
 
 
-class UserGeneratePasswordForm(StyleFormMixin, forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('email',)
+class UserGeneratePasswordForm(StyleFormMixin, forms.Form):
+    email = forms.EmailField(label='Ваша почта:')

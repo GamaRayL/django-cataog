@@ -9,6 +9,7 @@ class Command(BaseCommand):
             email='gamaizing@gmail.com',
             first_name='Gamid',
             last_name='Gadzhimagomedov',
+            is_active=True,
             is_staff=True,
             is_superuser=True
         )

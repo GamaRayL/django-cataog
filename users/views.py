@@ -69,7 +69,7 @@ class GenerateNewPasswordView(FormView):
     success_url = HttpResponse('Пароль сброшен')
 
     def form_valid(self, form):
-        user = form.save()
+        user = User.objects.get(email=form.cleaned_data.get('email'))
         new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
         send_mail(
             subject='Вы сменили пароль',

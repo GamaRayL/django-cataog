@@ -1,13 +1,14 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.forms import inlineformset_factory
-from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
-from django.utils.text import slugify
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, never_cache
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from mainapp.forms import ProductForm, VersionForm
-from mainapp.models import Product, Post, Version
+from mainapp.models import Product, Post, Version, Category
+from mainapp.services import get_cached_categories
 
 
 class ProductListView(ListView):
@@ -18,27 +19,34 @@ class ProductListView(ListView):
 
 
 class ProductDetailView(DetailView):
+    cache_page(60)
     model = Product
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('mainapp:products')
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Product
+    form_class = ProductForm
+    permission_required = 'mainapp.change_product'
     success_url = reverse_lazy('mainapp:products')
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
-    form_class = ProductForm
+    permission_required = 'mainapp.delete_product'
     success_url = reverse_lazy('mainapp:products')
 
     def get_context_data(self, **kwargs):
@@ -52,6 +60,9 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
         return context_data
 
+    def test_func(self):
+        return self.request.user.is_superuser
+
 
 class PostListView(ListView):
     model = Post
@@ -64,6 +75,29 @@ class PostListView(ListView):
         queryset = queryset.filter(is_published=True)
 
         return queryset
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ('title', 'body',)
+    success_url = reverse_lazy('mainapp:posts')
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ('title', 'body',)
+
+    def get_success_url(self):
+        return reverse('mainapp:post', args=[self.object.pk])
+
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    success_url = reverse_lazy('mainapp:posts')
 
 
 class PostDetailView(DetailView):
@@ -85,20 +119,12 @@ class PostDetailView(DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    fields = ('title', 'body',)
-    success_url = reverse_lazy('mainapp:posts')
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = 'Категории товаров'
+        context_data['category_list'] = get_cached_categories()
 
-class PostUpdateView(LoginRequiredMixin, UpdateView):
-    model = Post
-    fields = ('title', 'body',)
-
-    def get_success_url(self):
-        return reverse('mainapp:post', args=[self.object.pk])
-
-
-class PostDeleteView(LoginRequiredMixin, DeleteView):
-    model = Post
-    success_url = reverse_lazy('mainapp:posts')
+        return context_data
