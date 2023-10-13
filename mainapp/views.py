@@ -26,6 +26,7 @@ class ProductDetailView(DetailView):
 class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'mainapp.add_product'
     success_url = reverse_lazy('mainapp:products')
 
     @method_decorator(never_cache)
