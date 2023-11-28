@@ -1,9 +1,7 @@
 from django.db import models
-from django.utils import timezone
-from django.utils.text import slugify
-
 from users.models import User
 from utils.utils import NULLABLE
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -28,6 +26,7 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name='цена')
     create_at = models.DateTimeField(default=timezone.now, verbose_name='дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
+    is_published = models.BooleanField(default=False, verbose_name='признак публикации')
 
     def get_active_version(self):
         return self.versions.filter(is_current_version=True).first()
@@ -40,6 +39,25 @@ class Product(models.Model):
         verbose_name = 'товар'
         verbose_name_plural = 'товары'
         ordering = ('name',)
+
+        permissions = [
+            (
+                'set_moderator',
+                'Can moderator'
+            ),
+            (
+                'set_product_status',
+                'Can product_status'
+            ),
+            (
+                'set_product_description',
+                'Can product_description'
+            ),
+            (
+                'set_product_category',
+                'Can product_category'
+            )
+        ]
 
 
 class Version(models.Model):

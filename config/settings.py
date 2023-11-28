@@ -87,6 +87,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
     }
 }
 
@@ -152,7 +153,6 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL='/users/'
 
 # Cache
-
 CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 'True'
 
 if CACHE_ENABLED:

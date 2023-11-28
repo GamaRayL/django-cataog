@@ -1,9 +1,6 @@
-from random import randint
-
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from utils.utils import NULLABLE
+from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):

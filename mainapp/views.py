@@ -6,9 +6,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mainapp.forms import ProductForm, VersionForm
+from mainapp.forms import ProductForm, VersionForm, ShortProductForm
 from mainapp.models import Product, Post, Version, Category
 from mainapp.services import get_cached_categories
+from django.contrib.contenttypes.models import ContentType
 
 
 class ProductListView(ListView):
@@ -17,16 +18,25 @@ class ProductListView(ListView):
         'title': 'Каталог товаров'
     }
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        moderator = self.request.user.groups.filter(name='moderator').exists()
+        user = self.request.user
+
+        if user.is_superuser or moderator:
+            return queryset
+        else:
+            return queryset.filter(is_published=True)
+
 
 class ProductDetailView(DetailView):
-    cache_page(60)
     model = Product
 
 
-class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
-    permission_required = 'mainapp.add_product'
+    # permission_required = 'mainapp.add_product'
     success_url = reverse_lazy('mainapp:products')
 
     @method_decorator(never_cache)
@@ -38,11 +48,22 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         return super().form_valid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
-    form_class = ProductForm
-    permission_required = 'mainapp.change_product'
     success_url = reverse_lazy('mainapp:products')
+
+    def get_form_class(self):
+        if self.request.user == self.object.user or self.request.user.is_superuser:
+            return ProductForm
+        else:
+            return ShortProductForm
+
+    def test_func(self):
+        return (
+            self.request.user == self.get_object().user or
+            self.request.user.is_superuser or
+            self.request.user.groups.filter(name='moderator').exists()
+        )
 
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
